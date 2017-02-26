@@ -9,7 +9,7 @@ register = template.Library()
 @register.inclusion_tag('admin/prepopulated_fields_js.html', takes_context=True)
 def prepopulated_fields_js(context):
     """
-    Create a list of prepopulated_fields that should render Javascript for
+    Creates a list of prepopulated_fields that should render Javascript for
     the prepopulated fields for both the admin form and inlines.
     """
     prepopulated_fields = []
@@ -26,7 +26,10 @@ def prepopulated_fields_js(context):
         prepopulated_fields_json.append({
             "id": "#%s" % field["field"].auto_id,
             "name": field["field"].name,
-            "dependency_ids": ["#%s" % dependency.auto_id for dependency in field["dependencies"]],
+            "dependency_ids": ["#%s" % (dependency.selected_id
+                                        if hasattr(dependency, 'selected_id')
+                                        else dependency.auto_id)
+                               for dependency in field["dependencies"]],
             "dependency_list": [dependency.name for dependency in field["dependencies"]],
             "maxLength": field["field"].field.max_length or 50,
             "allowUnicode": getattr(field["field"].field, "allow_unicode", False)
